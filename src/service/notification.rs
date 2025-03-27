@@ -29,6 +29,10 @@ impl NotificationService {
         return Ok(subscriber_result);
     }    
 
+    pub fn list_messages() -> Result<Vec<String>> {
+        return Ok(NotificationRepository::list_all_as_string());
+    }    
+
     #[tokio::main]
     async fn subscribe_request(product_type: String) -> Result<SubscriberRequest> {
         let product_type_upper: String = product_type.to_uppercase();
