@@ -1,6 +1,6 @@
 use std::thread;
 use rocket::http::Status;
-use rocket::log;
+use rocket::log::warn_;
 use rocket::serde::json::to_string;
 use rocket::tokio;
 
@@ -46,13 +46,13 @@ impl NotificationService {
 
         let request_url: String = format!("{}/notification/subscribe/{}",  
             APP_CONFIG.get_publisher_root_url(), product_type_str);
-        let request = REQUEST_CLIENT  
+        let request = REQWEST_CLIENT  
             .post(request_url.clone())  
             .header("Content-Type", "application/json")  
             .header("Accept", "application/json")  
             .body(to_string(&payload).unwrap())  
             .send().await;  
-        log::warn!("Sent subscribe request to: {}", request_url);  
+        warn_!("Sent subscribe request to: {}", request_url);  
 
         return match request {  
             Ok(f) => match f.json::<SubscriberRequest>().await {  
@@ -78,19 +78,19 @@ impl NotificationService {
 
         let request_url: String = format!("{}/notification/unsubscribe/{}/{}",  
             APP_CONFIG.get_publisher_root_url(), APP_CONFIG.get_instance_name(), product_type_str);
-        let request = REQUEST_CLIENT  
+        let request = REQWEST_CLIENT  
             .post(request_url.clone())  
             .header("Content-Type", "application/json")  
             .header("Accept", "application/json")  
             .send().await;  
-        log::warn!("Sent unsubscribe request to: {}", request_url);  
+        warn_!("Sent unsubscribe request to: {}", request_url);  
 
         return match request {  
             Ok(f) => match f.json::<SubscriberRequest>().await {  
                 Ok(x) => Ok(x),  
                 Err(y) => Err(compose_error_response(  
                     Status::NotFound,  
-                    "Already unsubscribed to the topic."  
+                    "Already unsubscribed to the topic.".to_string(),  
                 )),  
             },  
             Err(e) => Err(compose_error_response(  
