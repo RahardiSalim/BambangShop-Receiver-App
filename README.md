@@ -86,4 +86,19 @@ This is the place for you to write reflections:
 
 #### Reflection Subscriber-1
 
+##### **1. Why do we use `RwLock<>` instead of `Mutex<>` for synchronizing the `Vec` of notifications?**  
+In this tutorial, we use `RwLock<>` to allow multiple readers to access the `Vec<Notification>` at the same time while ensuring that only one writer can modify it. This is beneficial because:  
+- **Efficiency**: Multiple threads can read the notifications simultaneously without blocking each other, improving performance.  
+- **Thread Safety**: The `RwLock` ensures that only one thread can modify (write) the notifications at any given time, preventing data races.  
+
+If we used `Mutex<>` instead, every access (both reading and writing) would require acquiring an exclusive lock, which means that even when multiple threads just need to read the data, they would have to wait for each other. This would cause unnecessary contention and reduce performance.  
+
+##### **2. Why does Rust require `lazy_static` for static variables while Java allows direct mutation?**  
+Rust enforces strict memory safety and ownership rules, which means that a mutable static variable must be explicitly synchronized to avoid data races. Unlike Java, where static variables can be mutated freely using static methods, Rust requires additional mechanisms (like `lazy_static!`) to safely initialize and manage mutable static variables. The reasons for this are:  
+- **Thread Safety**: In Java, static variables are shared across threads, and developers must manually ensure synchronization. Rust prevents potential data races by making static variables immutable by default.  
+- **Explicit Synchronization**: Rust enforces the use of `RwLock`, `Mutex`, or `Atomic` types to control concurrent access to static data.  
+- **Lazy Initialization**: `lazy_static!` ensures that static variables are initialized safely at runtime, preventing issues like accessing an uninitialized variable.  
+
+By using `lazy_static!`, we ensure that our `Vec<Notification>` and `DashMap` instances are safely initialized and can be used in a concurrent environment without violating Rust's safety guarantees.  
+
 #### Reflection Subscriber-2
