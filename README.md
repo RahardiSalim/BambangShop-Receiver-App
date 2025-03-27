@@ -102,3 +102,14 @@ Rust enforces strict memory safety and ownership rules, which means that a mutab
 By using `lazy_static!`, we ensure that our `Vec<Notification>` and `DashMap` instances are safely initialized and can be used in a concurrent environment without violating Rust's safety guarantees.  
 
 #### Reflection Subscriber-2
+
+##### 1. Exploration Beyond the Tutorial Steps  
+During the tutorial, I primarily followed the outlined steps to ensure correct implementation. However, I also explored additional files like `src/lib.rs` to better understand the overall project structure. From this exploration, I learned that `src/lib.rs` plays a crucial role in defining module visibility and dependencies. It acts as an entry point for organizing services, controllers, and repositories in a structured manner. Understanding this helped me grasp how different components interact within the application.
+
+##### 2. Observer Pattern and Scalability  
+After completing the tutorial and testing the notification system by spawning multiple Receiver instances, I realized how the **Observer pattern** simplifies the process of adding more subscribers. Since each Receiver instance acts as an observer, it can independently subscribe to notifications without modifying the main system. This flexibility allows for easy scalability—new instances can be added without disrupting existing ones.
+
+However, spawning multiple **Main app instances** presents a different challenge. Unlike Receivers, which act as passive listeners, the Main app plays a central role in sending notifications. Running multiple Main app instances could lead to redundancy or conflicts in managing subscriptions. A proper solution would involve load balancing or a message queue system to handle multiple Main instances efficiently.
+
+##### 3. Testing and Documentation Enhancements  
+I attempted to create my own **unit tests** to validate functions like `subscribe_request`, `unsubscribe_request`, and `receive_notification`. Writing these tests was beneficial in catching potential issues early and ensuring each component worked as expected. Additionally, I enhanced the **Postman collection documentation** by adding descriptions for each API endpoint. This proved useful when debugging API requests and sharing the system with others in a team setting.
